@@ -21,7 +21,7 @@ public class Project {
 	
 	
 	public String toString(){
-		return this.name + " ID: "+id;
+		return this.name;
 	}
 	
 	public static Project getProject(String name){

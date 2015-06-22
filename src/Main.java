@@ -9,24 +9,31 @@ public class Main {
 	
 	
 	public static void main(String[] args) {
-		
-		new Project("Empty");
 
 		new Project("Project 1");
 		new Project("Project 2",2);
 		new Project("Project 3",3);
-//		new Project("Project 4",4);
+		new Project("Project 4",4);
 //		new Project("Project 5");
 //		new Project("Project 6");
 //		new Project("Project 7");
 //		new Project("Project 8");
 //		new Project("Project 9");
 
-		ArrayList<RoadMap> rmList = RMGenerator.generateRoadmaps(Project.projectList);
-		for(RoadMap rm: rmList){
-			System.out.println(rm+"\t"+rm.idSequence);
+		RMGenerator.generateRoadmaps(Project.projectList);
+		for(RMContainer rmc : RMContainer.lstRMContainerSingle){
+			System.out.println("");
+			for(RoadMap rm: rmc.getLstRM()){
+				System.out.println(rm);
+			}
 		}
 		
-		System.out.println(rmList.size() + " Roadmaps generated");
+		for(RMContainer rmc : RMContainer.lstRMContainerCombined){
+			System.out.println("");
+			for(RoadMap rm: rmc.getLstRM()){
+				System.out.println(rm);
+			}
+		}
+		
 	}
 }
