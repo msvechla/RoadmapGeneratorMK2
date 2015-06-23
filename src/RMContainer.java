@@ -9,6 +9,8 @@ public class RMContainer {
 	public static List<RMContainer> lstRMContainerCombined = new ArrayList<RMContainer>();
 	public static List<HashSet<Integer>> lstCombinedProjectIDs = new ArrayList<HashSet<Integer>>();
 	
+	public static int countRoadMapsGenerated=0;
+	
 	
 	private boolean isCombinedContainer;
 	private HashSet<Integer> implementedProjects;
@@ -27,6 +29,7 @@ public class RMContainer {
 	
 	public void addRoadMap(RoadMap rm){
 		this.lstRM.add(rm);
+		countRoadMapsGenerated++;
 	}
 	
 	public List<RoadMap> getLstRM(){

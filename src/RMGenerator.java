@@ -6,41 +6,49 @@ import java.util.List;
 
 public class RMGenerator {
 
+	/**
+	 * Algorithm for generating all possible Roadmaps from pre-defined projects
+	 * @param projectList A list of all projects that can be implemented
+	 */
 	public static void generateRoadmaps(List<Project> projectList) {
+		
+		System.out.println("--- START: generateRoadmaps()");
 		
 		//STEP1 Generate SingleContainers
 		for(Project p : projectList){
 			
-			//Für jedes Projekt einen Container erstellen
+			//create a container for every project
 			HashSet<Integer> implementedProjectIDs = new HashSet<Integer>();
 			implementedProjectIDs.add(p.id);
 			RMContainer rmc = new RMContainer(false, implementedProjectIDs);
 			
-			//Neue Roadmap für implementation in jeder Periode anlegen
+			//add a roadmaps to the container for implementation start in each period
 			for(int period = 0; period < Main.COUNT_PERIODS - p.numberOfPeriods+1; period++){
 				
 				Project[][] roadmap = new Project[Main.COUNT_PERIODS][Main.COUNT_PROJECTS_MAX_PER_PERIOD];
 				
 				for(int i = 0; i < Main.COUNT_PERIODS;i++){
 					if((i<period) || (i> (period + p.numberOfPeriods-1))){
-						//Kein Projekt durchführen
+						//no project implemented
 					}else{
-						//Projekt wird implementiert
+						//project is implemented
 						roadmap[i][0] = p;
 					}
 				}
+				//add roadmap to the SingleContainer
 				rmc.addRoadMap(new RoadMap(roadmap,implementedProjectIDs));
 			}
 			
 		}
 		
-		//STEP2 Generate initial CombinedContainers
-		
+		//STEP2: Generate initial CombinedContainers from combining SingleContainers with SingleContainers
+		//STEP3: Generate CombinedContainers from looping through CombinedContainers and combining with SingleContainers
 		
 		List<List<RMContainer>> lstSingleCombined = new ArrayList<List<RMContainer>>();
-		lstSingleCombined.add(RMContainer.lstRMContainerSingle);
-		lstSingleCombined.add(RMContainer.lstRMContainerCombined);
+		lstSingleCombined.add(RMContainer.lstRMContainerSingle); //list for STEP2
+		lstSingleCombined.add(RMContainer.lstRMContainerCombined); //list for STEP3
 		
+		//Work through STEP2 and STEP3
 		for(List<RMContainer>lstRMContainer : lstSingleCombined){
 			
 			for(int i=0;i<lstRMContainer.size();i++){
@@ -48,19 +56,19 @@ public class RMGenerator {
 				
 				for(RMContainer rmcSingle : RMContainer.lstRMContainerSingle){
 					
-					//Falls die Kombination noch nicht generiert wurde -> generieren
+					//if combination has not been generated yet -> generate
 					HashSet<Integer> implementedProjectIDs = new HashSet<Integer>();
 					implementedProjectIDs.addAll(rmcSingle.getImplementedProjects());
 					implementedProjectIDs.addAll(rmcSingle2.getImplementedProjects());
 					
 					if(!RMContainer.lstCombinedProjectIDs.contains(implementedProjectIDs)){
-						//Container erstellen
+						//create container
 						RMContainer rmcCombined = null;
 						
 						for(RoadMap rmSingle: rmcSingle.getLstRM()){
 							for(RoadMap rmSingle2: rmcSingle2.getLstRM()){
 								
-								//Die beiden Roadmaps kombinieren
+								//combine both roadmaps
 								Project[][] roadmap = combineRoadMaps(rmSingle,rmSingle2);
 								if(roadmap != null){
 									
@@ -79,12 +87,16 @@ public class RMGenerator {
 			
 		}
 		
+		System.out.println("--- FINISH: generateRoadmaps()");
 		
-
-		
-
 	}
 
+	/**
+	 * Combines two Roadmaps to a single Roadmap
+	 * @param rmSingle the first Roadmap
+	 * @param rmSingle2 the second Roadmap
+	 * @return Combined roadmap is returned if combination fits setup. Otherwise null is returned.
+	 */
 	private static Project[][] combineRoadMaps(RoadMap rmSingle,
 			RoadMap rmSingle2) {
 		
@@ -92,13 +104,13 @@ public class RMGenerator {
 		
 		for(int period = 0; period<rmSingle.getRMArray().length;period++){
 			
-			//Alle Projekte aus beiden RoadMaps pro periode zusammenfassen
+			//combine all projects from both roadmaps per period
 			HashSet<Project> projectsInPeriod = new HashSet<Project>();
 			projectsInPeriod.addAll(Arrays.asList(rmSingle.getRMArray()[period]));
 			projectsInPeriod.addAll(Arrays.asList(rmSingle2.getRMArray()[period]));
 			projectsInPeriod.remove(null);
 		
-			//Wenn die Maximale anzahl an Projekten per Periode nicht überschritten wurde -> abspeichern
+			//save period if COUNT_PROJECTS_MAX_PER_PERIOD is not exceeded, otherwise stop combination
 			if(projectsInPeriod.size() <= Main.COUNT_PROJECTS_MAX_PER_PERIOD){
 				int i=0;
 				for(Project p : projectsInPeriod){
@@ -111,13 +123,6 @@ public class RMGenerator {
 		}
 
 		return rmCombined;
-	}
-
-	// Gibt anhand des Project Slots die Periode zurück (0 = 1. Periode, 1 = 2.
-	// Periode...)
-	private static int calculatePeriod(int index) {
-		double dIndex = (double) index;
-		return (int) (Math.ceil(dIndex / Main.COUNT_PROJECTS_MAX_PER_PERIOD) - 1);
 	}
 
 }
