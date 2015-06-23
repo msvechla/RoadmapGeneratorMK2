@@ -4,8 +4,8 @@ import java.util.HashSet;
 
 public class Main {
 	
-	public static final int COUNT_PERIODS = 4;
-	public static final int COUNT_PROJECTS_MAX_PER_PERIOD = 2;
+	public static final int COUNT_PERIODS = 3;
+	public static final int COUNT_PROJECTS_MAX_PER_PERIOD = 4;
 	
 	
 	public static void main(String[] args) {
